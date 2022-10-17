@@ -1,0 +1,62 @@
+5
+Neil Diamond
+Greatest Hits
+1968
+2
+3
+Crackling Rose
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Soolaimon
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/buonlamemoi.mp3
+Sweet Caroline
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/chuyendoita.wav
+Platters
+Greatest Hits
+1991
+1
+2
+Twilight Time
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/henkiepsau.mp3
+The Great Pretender
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/tethatanhnhoem.mp3
+Don McClean
+American Pie
+1971
+2
+0
+Carly Simon
+No Secrets
+1972
+2
+3
+The Carter Family
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/buonlamemoi.mp3
+Your So Vain
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/henkiepsau.mp3
+Embrace me You Child
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Carly Simon
+No Secrets
+1972
+2
+10
+The Carter Family
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/chuyendoita.wav
+Your So Vain
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/henkiepsau.mp3
+Embrace me You Child
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/tethatanhnhoem.mp3
+Embrace Child
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/buonlamemoi.mp3
+Buon Lam Em Oi
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Buon Lam Em Oi
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Buon Lam Em Oi
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Buon Lam Em Oi
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Buon Lam Em Oi
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/anhtheday.mp3
+Buon Lam Em Oi
+/Users/nguyenhoangan/Documents/Code linh tinh/music player ruby/audio_file/henkiepsau.mp3

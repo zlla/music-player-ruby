@@ -66,6 +66,11 @@ class MusicPlayerMain < Gosu::Window
 		@navi_btn_color_1 = Gosu::Color::RED
 		@navi_btn_color_2 = Gosu::Color::RED
 		@check_play = true
+		@heart_clicks = Array.new()
+		@heart_btn_colors = Array.new()
+		@favourite_tracks = Array.new()
+		@favourite_albumns = Array.new()
+		@favourite_selects = Array.new()
 	end
 
 	def update
@@ -144,6 +149,15 @@ class MusicPlayerMain < Gosu::Window
 				if id == Gosu::MsLeft
 					if (mouse_over_position_p1(mouse_x, mouse_y) != -1)
 						@select_album += (mouse_over_position_p1(mouse_x, mouse_y) + @check_scroll)
+						@heart_clicks = Array.new(@albums[@select_album].tracks.length)
+						@heart_btn_colors = Array.new(@albums[@select_album].tracks.length) 
+						i = 0
+						while (i < @albums[@select_album].tracks.length)
+							@heart_clicks[i] = false
+							@heart_btn_colors[i] = Gosu::Color.new(0xFF283655)
+							i+=1
+						end
+
 						@change_page = 1
 						@background = Gosu::Color.new(0xFF283655)
 						i = 0
@@ -185,19 +199,59 @@ class MusicPlayerMain < Gosu::Window
 					end
 				end
 
-				if id == Gosu::MsLeft
+				if id == Gosu::MsRight
 					if (mouse_y > 470 and mouse_y < 470 + 50*6)
-						if (mouse_x < 550 and mouse_x > 0)
-							@select_track = (mouse_over_position_p2(mouse_x, mouse_y))
-							@change_page = 2
-							@check_play = true
-							@song = Gosu::Song.new(@albums[@select_album].tracks[@select_track].location.chomp) 
-							@song.play
-						end
-
 						if (mouse_x > 550 and mouse_x < 600)
 							track_current = check_favourite_track(mouse_x, mouse_y)
-							puts(@albums[@select_album].tracks[track_current].name)
+							if @heart_clicks[track_current] == true
+								@heart_clicks[track_current] = false
+								@heart_btn_colors[track_current] = Gosu::Color.new(0xFF283655)
+							end
+						end
+					end
+				end
+				if id == Gosu::MsLeft
+					length_track = @albums[@select_album].tracks.length
+					if (length_track > 6)
+						if (mouse_y > 470 and mouse_y < 470 + 50*6)
+							if (mouse_x < 550 and mouse_x > 0)
+								@select_track = (mouse_over_position_p2(mouse_x, mouse_y))
+								@change_page = 2
+								@check_play = true
+								@song = Gosu::Song.new(@albums[@select_album].tracks[@select_track].location.chomp) 
+								@song.play
+							end
+
+							if (mouse_x > 550 and mouse_x < 600)
+								track_current = check_favourite_track(mouse_x, mouse_y)
+								if @heart_clicks[track_current] == false
+									@heart_btn_colors[track_current] = Gosu::Color::WHITE
+									@heart_clicks[track_current] = true
+									@favourite_tracks << @albums[@select_album].tracks[track_current]
+									@favourite_albumns << @albums[@select_album]
+								end
+							end
+						end
+					else
+						if (mouse_y > 470 and mouse_y < 470 + 50*length_track)
+							if (mouse_x < 550 and mouse_x > 0)
+								@select_track = (mouse_over_position_p2(mouse_x, mouse_y))
+								@change_page = 2
+								@check_play = true
+								@song = Gosu::Song.new(@albums[@select_album].tracks[@select_track].location.chomp) 
+								@song.play
+							end
+
+							if (mouse_x > 550 and mouse_x < 600)
+								track_current = check_favourite_track(mouse_x, mouse_y)
+								if @heart_clicks[track_current] == false
+									@heart_btn_colors[track_current] = Gosu::Color::WHITE
+									@heart_clicks[track_current] = true
+									@favourite_tracks << @albums[@select_album].tracks[track_current]
+									@favourite_albumns << @albums[@select_album]
+									@favourite_selects << @select_album
+								end
+							end
 						end
 					end
 
@@ -270,6 +324,26 @@ class MusicPlayerMain < Gosu::Window
 					elsif (check_navi_btn(mouse_x, mouse_y) == 2)
 						@background = Gosu::Color.new(0xFF283655)
 						@change_page = 3
+					end
+
+					if (@favourite_tracks.length > 0 and mouse_y > 200 and mouse_y < 200 + 50*@favourite_tracks.length and mouse_y < 750)
+						number_select = check_mouse_favourite_tracks(mouse_x, mouse_y)
+						@change_page = 2
+						@check_play = true
+						@song = Gosu::Song.new(@favourite_tracks[number_select].location.chomp) 
+						@song.play
+						@albums[@select_album].tracks[@select_track].name = @favourite_tracks[number_select].name
+						i = 0
+						while (i < @favourite_albumns.length)
+							j = 0
+							while (j < @favourite_albumns[i].tracks.length)
+								if (@favourite_albumns[i].tracks[j].name == @favourite_tracks[number_select].name)
+									@albums[@select_album].artist = @favourite_albumns[i].artist
+								end
+								j+=1
+							end
+							i+=1
+						end
 					end
 
 				end
@@ -364,6 +438,17 @@ class MusicPlayerMain < Gosu::Window
 		end
 	end
 
+	def check_mouse_favourite_tracks(mouse_x, mouse_y)
+		i = 0
+		while (i < @favourite_tracks.length)
+			if (mouse_x > 100 and mouse_x < 600) and (mouse_y > 200 + 50*i and mouse_y < 200 + 50*(i+1))
+				return i
+			end
+			i+=1
+		end
+
+	end
+
 	def needs_cursor?; true; end
 
 	def draw_background
@@ -424,7 +509,7 @@ class MusicPlayerMain < Gosu::Window
 		i = 0
 		while (i < @albums[@select_album].tracks.length)
 			@track_text.draw("#{i+1}: #{@albums[@select_album].tracks[i].name}", 100, possition_track + @y_possition_scroll_track, ZOrder::PLAYER, 1.0, 1.0, @tracks_color[i])
-			Gosu.draw_rect(550, possition_track + @y_possition_scroll_track, 50, 26, Gosu::Color::WHITE, ZOrder::PLAYER, mode=:default)
+			Gosu.draw_rect(550, possition_track + @y_possition_scroll_track, 50, 26, @heart_btn_colors[i], ZOrder::PLAYER, mode=:default)
 			heart_btn.bmp.draw(562.5, possition_track + @y_possition_scroll_track, 1, 0.050, 0.050)
 			possition_track+=50
 			i+=1
@@ -452,6 +537,16 @@ class MusicPlayerMain < Gosu::Window
 			play_btn = ArtWork.new("./btn_function_imgs/play.png")
 			play_btn.bmp.draw(225, 600, 2, 0.3, 0.3)
 		end
+	end
+
+	def draw_favourite_track
+		i = 0
+		possition_track = 200
+		while (i < @favourite_tracks.length)
+			@track_text.draw("#{i+1}: #{@favourite_tracks[i].name}", 100, possition_track, ZOrder::PLAYER, 1.0, 1.0, Gosu::Color::WHITE)
+			possition_track += 50
+			i+=1
+		end
 
 	end
 
@@ -470,6 +565,7 @@ class MusicPlayerMain < Gosu::Window
 		elsif (@change_page == 3)
 			draw_background
 			draw_navi
+			draw_favourite_track
 		end
 	end
 

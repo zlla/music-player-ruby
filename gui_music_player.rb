@@ -49,7 +49,8 @@ class MusicPlayerMain < Gosu::Window
 			animation()
 			@albums = read_albums(file_name)
 			@file_has_loaded = 1
-		end
+		end		  
+		@song
 		@y_possition_scroll = 0
 		@y_possition_scroll_track = 0
 		@check_scroll = 0
@@ -64,12 +65,8 @@ class MusicPlayerMain < Gosu::Window
 		@tracks_color = Array.new(@albums[@select_album].tracks.length)
 		@navi_btn_color_1 = Gosu::Color::RED
 		@navi_btn_color_2 = Gosu::Color::RED
+		@check_play = true
 	end
-
-	def playTrack(track, album)
-		@song = Gosu::Song.new(album.tracks[track].location.chomp)
-  		@song.play(false)
-  	end
 
 	def update
 		if @change_page == 0
@@ -166,6 +163,7 @@ class MusicPlayerMain < Gosu::Window
 						@y_possition_scroll = 0
 						@y_possition_scroll_track = 0
 					elsif (check_navi_btn(mouse_x, mouse_y) == 2)
+						@background = Gosu::Color.new(0xFF283655)
 						@change_page = 3
 					end
 				end
@@ -192,11 +190,11 @@ class MusicPlayerMain < Gosu::Window
 						if (mouse_x < 550 and mouse_x > 0)
 							@select_track = (mouse_over_position_p2(mouse_x, mouse_y))
 							@change_page = 2
-							playTrack(@select_track, @albums[@select_album])
+							@check_play = true
+							@song = Gosu::Song.new(@albums[@select_album].tracks[@select_track].location.chomp) 
+							@song.play
 						end
-					end
 
-					if (mouse_y > 470 and mouse_y < 470 + (@albums[@select_album].tracks.length*50))
 						if (mouse_x > 550 and mouse_x < 600)
 							track_current = check_favourite_track(mouse_x, mouse_y)
 							puts(@albums[@select_album].tracks[track_current].name)
@@ -206,6 +204,10 @@ class MusicPlayerMain < Gosu::Window
 					if (mouse_over_position_p2(mouse_x, mouse_y) == true)
 						@background = TOP_COLOR
 						@change_page = 0
+						@y_possition_scroll = 0
+						@y_possition_scroll_track = 0
+						@check_scroll = 0
+						@check_scroll_track = 0
 						@select_album = -1
 						@select_track = -1
 					end
@@ -225,6 +227,34 @@ class MusicPlayerMain < Gosu::Window
 				end
 
 			elsif @change_page == 2
+				if id == Gosu::MsLeft
+					if (back_btn_in_p3(mouse_x, mouse_y) == true)
+						@background = Gosu::Color.new(0xFF283655)
+						@change_page = 1
+					end
+
+					if (mouse_over_position_p3(mouse_x, mouse_y) == false)
+						@check_play = false
+						@song.pause
+					elsif (mouse_over_position_p3(mouse_x, mouse_y) == true)
+						@check_play = true
+						@song.play
+					end
+
+					if (mouse_over_position_p3(mouse_x, mouse_y) == 1)
+						if (@select_track > 0)
+							@select_track-=1
+							@song = Gosu::Song.new(@albums[@select_album].tracks[@select_track].location.chomp) 
+							@song.play
+						end
+					elsif (mouse_over_position_p3(mouse_x, mouse_y) == 2)
+						if (@select_track < @albums[@select_album].tracks.length)
+							@select_track+=1
+							@song = Gosu::Song.new(@albums[@select_album].tracks[@select_track].location.chomp) 
+							@song.play
+						end
+					end
+				end
 
 			elsif @change_page == 3
 				if id == Gosu::MsLeft
@@ -238,6 +268,7 @@ class MusicPlayerMain < Gosu::Window
 						@select_album = -1
 						@select_track = -1
 					elsif (check_navi_btn(mouse_x, mouse_y) == 2)
+						@background = Gosu::Color.new(0xFF283655)
 						@change_page = 3
 					end
 
@@ -275,6 +306,34 @@ class MusicPlayerMain < Gosu::Window
 				distance_top += 50
 				distance_bot += 50
 				number_to_play+=1
+			end
+		end
+	end
+
+	def back_btn_in_p3(mouse_x, mouse_y)
+		back_btn = false
+		if (mouse_x > 0 and mouse_x < 60) and (mouse_y > 0 and mouse_y < 60)
+			return back_btn = true
+		end
+	end
+
+	def mouse_over_position_p3(mouse_x, mouse_y)
+		if (mouse_x > 50 and mouse_x < 150) and (mouse_y > 620 and mouse_y < 720)
+			return 1
+		end
+
+		if (mouse_x > 450 and mouse_x < 550) and (mouse_y > 620 and mouse_y < 720)
+			return 2
+		end
+
+		if (@check_play == true)
+			if (mouse_x > 225 and mouse_x < 375) and (mouse_y > 600 and mouse_y < 750)
+				return false
+			end
+		end
+		if (@check_play == false)
+			if (mouse_x > 225 and mouse_x < 375) and (mouse_y > 600 and mouse_y < 750)
+				return true
 			end
 		end
 	end
@@ -372,6 +431,30 @@ class MusicPlayerMain < Gosu::Window
 		end
 	end
 
+	def draw_player_music
+		back_btn = ArtWork.new("./btn_function_imgs/backbtn1.png")
+		back_btn.bmp.draw(0, 0, 2, 0.115, 0.115)
+		@list_imgs[@select_album].bmp.draw(100, 60, 2, 1.6, 1.6)
+		title = Gosu::Font.new(self, "Space mono", 40)
+		title.draw("#{@albums[@select_album].tracks[@select_track].name}" , 100, 500, ZOrder::UI, 1.0, 1.0, Gosu::Color::WHITE)
+		artist = Gosu::Font.new(self, "Space mono", 30)
+		artist.draw("#{@albums[@select_album].artist}" , 100, 540, ZOrder::UI, 1.0, 1.0, Gosu::Color.new(0x80FFFFFF))
+
+		#function_btn
+		back_function = ArtWork.new("./btn_function_imgs/back.png")
+		back_function.bmp.draw(50, 620, 2, 0.2, 0.2)
+		next_function = ArtWork.new("./btn_function_imgs/next.png")
+		next_function.bmp.draw(450, 620, 2, 0.2, 0.2)
+		if (@check_play == true)
+			pause_btn = ArtWork.new("./btn_function_imgs/pause.png")
+			pause_btn.bmp.draw(225, 600, 2, 0.3, 0.3)
+		elsif (@check_play == false)
+			play_btn = ArtWork.new("./btn_function_imgs/play.png")
+			play_btn.bmp.draw(225, 600, 2, 0.3, 0.3)
+		end
+
+	end
+
 	def draw
 		if (@change_page == 0)
 			draw_background
@@ -383,6 +466,7 @@ class MusicPlayerMain < Gosu::Window
 			draw_navi
 		elsif (@change_page == 2)
 			draw_background
+			draw_player_music
 		elsif (@change_page == 3)
 			draw_background
 			draw_navi
